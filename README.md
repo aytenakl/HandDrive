@@ -431,9 +431,9 @@ A demonstration video and project images can be added here.
 <img width="591" height="1280" alt="WhatsApp Image 2026-08-21 at 5 52 31 PM" src="https://github.com/user-attachments/assets/f54803e0-768a-4659-b2d2-89eed509ef72" />
 
 ```text
-🎥 Demo Video
+## 📸 Demo
 
-📷 Project Photos
+A demonstration video and project images can be added here.
 ```
 
 ---
