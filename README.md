@@ -436,4 +436,3 @@ A demonstration video and project images can be added here.
 The following video demonstrates real-time hand gesture control of the robotic car using Computer Vision, MediaPipe, Python, and Arduino.
 
 [▶️ Watch the HandDrive Demo](./handdrive-demo.mp4)
-<img width="591" height="1280" alt="handdrive-demo mp4" src="https://github.com/user-attachments/assets/b3714367-09c9-4806-8186-88071214ec25" />
