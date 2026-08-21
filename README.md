@@ -1,6 +1,4 @@
-# 🚗 HandDrive
-
-### Computer Vision Based Gesture-Controlled Robotic Car
+# 🚗 HandDrive — Computer Vision Based Gesture-Controlled Robotic Car
 
 **HandDrive** is a real-time robotic car controlled using **hand gestures** detected through a webcam.
 
@@ -8,17 +6,15 @@ The project combines **Computer Vision, Hand Gesture Recognition, Python, MediaP
 
 ---
 
-## 📌 About The Project
+## 📌 About the Project
 
-HandDrive allows the user to control a robotic car by moving their hands in front of a camera.
+HandDrive allows users to control a robotic car by moving their hands in front of a camera.
 
-Instead of using a traditional remote control, the system uses **MediaPipe Hand Landmarker** to detect two hands and analyze the angle between their wrist positions.
+The system uses **MediaPipe Hand Landmarker** to detect hands and analyze their positions. Python processes the detected hand movement and converts it into movement commands, which are sent to an Arduino through **Serial Communication**.
 
-Python converts the detected hand movement into a simple movement command and sends it to the Arduino through **Serial Communication**.
+The Arduino receives these commands and controls the motors through an **L298N Motor Driver**.
 
-The Arduino receives the command and controls the motors through an **L298N Motor Driver**.
-
-### System Flow
+### 🔄 System Flow
 
 ```text
 Webcam
@@ -27,13 +23,13 @@ OpenCV
    ↓
 MediaPipe Hand Landmarker
    ↓
-21 Hand Landmarks
+Hand Landmarks
    ↓
 Hand Position & Angle Analysis
    ↓
 Gesture Classification
    ↓
-Serial Command
+Serial Communication
    ↓
 Arduino
    ↓
@@ -46,31 +42,16 @@ DC Motors
 
 ---
 
-## 🎯 Project Goal
-
-The main goal of HandDrive is to combine:
-
-* 🤖 Robotics
-* 👁️ Computer Vision
-* ✋ Hand Gesture Recognition
-* 🐍 Python
-* 🔌 Arduino
-* 📡 Serial Communication
-
-into an interactive system for controlling a robotic vehicle using natural hand movements.
-
----
-
 ## ✋ Gesture Controls
 
-The current version uses two detected hands to determine the movement direction.
+The current implementation uses two detected hands to determine the movement direction.
 
-| Hand Position                  | Command | Car Action |
-| ------------------------------ | ------- | ---------- |
-| ↔️ Hands approximately aligned | `F`     | Forward    |
-| ↗️ Hands angled                | `R`     | Right      |
-| ↖️ Hands angled                | `L`     | Left       |
-| ❌ One/no hand detected         | `S`     | Stop       |
+| Gesture                          | Command | Car Action |
+| -------------------------------- | ------- | ---------- |
+| ↔️ Hands approximately aligned   | `F`     | Forward    |
+| ↗️ Hands angled                  | `R`     | Right      |
+| ↖️ Hands angled                  | `L`     | Left       |
+| ❌ No/insufficient hands detected | `S`     | Stop       |
 
 ### Serial Commands
 
@@ -82,26 +63,17 @@ R → Right
 S → Stop
 ```
 
-The Arduino also supports **Backward** through the `B` command, allowing the system to be extended with a backward gesture in future versions.
+The Arduino also supports the `B` command for backward movement, which can be connected to a dedicated backward gesture in future versions.
 
 ---
 
 ## 🧠 Computer Vision
 
-The project uses **MediaPipe Hand Landmarker** to detect hands in real time.
+The project uses **MediaPipe Hand Landmarker** for real-time hand tracking.
 
-Each detected hand contains **21 landmarks**, including:
+Each detected hand contains **21 landmarks**, including the wrist and finger landmarks.
 
-* Wrist
-* Thumb
-* Index Finger
-* Middle Finger
-* Ring Finger
-* Pinky
-
-The current Python implementation uses the wrist position of each detected hand.
-
-For two detected hands:
+The current implementation analyzes the wrist positions of two detected hands and calculates the angle between them:
 
 ```python
 dx = x2 - x1
@@ -110,21 +82,15 @@ dy = y2 - y1
 angle = math.degrees(math.atan2(dy, dx))
 ```
 
-The calculated angle is then used to determine whether the car should move:
-
-* Forward
-* Left
-* Right
-
-If two hands are not detected, the system sends the stop command.
+The calculated angle is then used to classify the car's movement direction.
 
 ---
 
 ## 🛑 Safety Feature
 
-Safety is an important part of the project.
+Safety is an important part of HandDrive.
 
-The car automatically receives:
+The system automatically sends:
 
 ```text
 S
@@ -134,16 +100,15 @@ when:
 
 * No hands are detected.
 * Only one hand is detected.
-* The camera fails.
-* The Python program is closed.
+* Control is lost.
 
-Before exiting the program, Python also sends:
+Before exiting, Python also sends a final stop command:
 
 ```python
 arduino.write(b"S")
 ```
 
-This helps prevent the car from continuing to move after the program is stopped.
+This helps prevent the car from continuing to move when control is lost.
 
 ---
 
@@ -165,7 +130,7 @@ This helps prevent the car from continuing to move after the program is stopped.
 * Robotic Car Chassis
 * Webcam
 * USB Serial Communication
-* HC Bluetooth module *(supported by Arduino code)*
+* HC Bluetooth Module
 
 ---
 
@@ -191,7 +156,7 @@ The Arduino uses `SoftwareSerial`:
 | RX        |      10 |
 | TX        |      11 |
 
-The motor speed is currently set using:
+Motor speed is currently controlled using PWM:
 
 ```cpp
 analogWrite(ENA, 180);
@@ -208,32 +173,31 @@ HandDrive/
 ├── car.py
 ├── car code arduino2.ino
 ├── hand_landmarker.task
+├── handdrive-demo.mp4
 └── README.md
 ```
 
-### Files
+### `car.py`
 
-**`car.py`**
-
-Python program responsible for:
+The Python program is responsible for:
 
 * Opening the webcam
 * Detecting hands
 * Processing MediaPipe landmarks
-* Calculating hand angle
-* Determining movement direction
+* Calculating hand angles
+* Classifying movement
 * Sending commands to Arduino
 
-**`car code arduino2.ino`**
+### `car code arduino2.ino`
 
-Arduino program responsible for:
+The Arduino program is responsible for:
 
-* Receiving commands from Python
-* Receiving Bluetooth commands
+* Receiving commands
 * Controlling the L298N motor driver
-* Moving the robotic car
+* Controlling the DC motors
+* Supporting Bluetooth commands
 
-**`hand_landmarker.task`**
+### `hand_landmarker.task`
 
 MediaPipe hand landmark model used for hand detection.
 
@@ -245,15 +209,10 @@ MediaPipe hand landmark model used for hand detection.
 
 ```bash
 git clone https://github.com/aytenakl/HandDrive.git
-```
-
-### 2. Enter the Project Directory
-
-```bash
 cd HandDrive
 ```
 
-### 3. Install Python Dependencies
+### 2. Install Dependencies
 
 ```bash
 pip install opencv-python mediapipe pyserial
@@ -263,7 +222,7 @@ pip install opencv-python mediapipe pyserial
 
 ## ▶️ Running the Project
 
-### Step 1 — Connect Arduino
+### Step 1 — Connect the Arduino
 
 Connect the Arduino to your computer using USB.
 
@@ -271,13 +230,13 @@ Connect the Arduino to your computer using USB.
 
 Find the COM port assigned to your Arduino.
 
-The current Python code uses:
+For example:
 
 ```python
 arduino = serial.Serial("COM16", 9600)
 ```
 
-If your Arduino appears on another port, change `COM16`:
+If your Arduino uses another port, change it accordingly:
 
 ```python
 arduino = serial.Serial("COM5", 9600)
@@ -285,7 +244,7 @@ arduino = serial.Serial("COM5", 9600)
 
 ### Step 3 — Upload the Arduino Code
 
-Open the Arduino `.ino` file in Arduino IDE and upload it to the board.
+Open the `.ino` file in Arduino IDE and upload it to the Arduino.
 
 Make sure the baud rate is:
 
@@ -299,11 +258,11 @@ Serial.begin(9600);
 python car.py
 ```
 
-The webcam will open and begin detecting your hands.
+The webcam will open and begin detecting hand movements.
 
 ### Step 5 — Control the Car
 
-Move both hands in front of the camera to control the direction.
+Move both hands in front of the webcam to control the robotic car.
 
 Press:
 
@@ -311,18 +270,17 @@ Press:
 Q
 ```
 
-to close the program.
+to exit the program.
 
 ---
 
 ## 📡 Serial Communication
 
-Python and Arduino communicate using **PySerial**.
+Python communicates with Arduino using **PySerial**.
 
 ### Communication Settings
 
 ```text
-Port: COM16
 Baud Rate: 9600
 ```
 
@@ -336,7 +294,7 @@ R → Right
 S → Stop
 ```
 
-The Arduino checks both communication channels:
+The Arduino can receive commands through:
 
 ```text
 Python / USB Serial
@@ -346,13 +304,11 @@ Python / USB Serial
     Bluetooth
 ```
 
-This means the same car can receive movement commands through either USB serial communication or Bluetooth.
-
 ---
 
-## 🚗 Arduino Motor Control
+## 🚗 Motor Control
 
-The Arduino controls the two motors using the L298N motor driver.
+The L298N motor driver controls the two DC motors.
 
 ### Forward
 
@@ -391,48 +347,47 @@ Right Motor → Stop
 
 ---
 
-## 💡 Key Features
+## ✨ Key Features
 
 * ✋ Real-time hand tracking
-* 👁️ Computer vision based control
+* 👁️ Computer vision-based control
 * 🤖 Robotic car control
-* 📐 Hand-angle based steering
+* 📐 Hand-angle-based steering
 * 🔌 Arduino serial communication
-* 📡 Bluetooth command support
+* 📡 Bluetooth support
 * 🛑 Automatic stop when hands are lost
-* ⚡ Real-time camera processing
-* 🧩 Modular Python and Arduino architecture
+* ⚡ Real-time processing
+* 🧩 Python + Arduino architecture
 
 ---
 
 ## 🔮 Future Improvements
 
-Possible improvements for future versions:
-
-* ↩️ Add a dedicated backward hand gesture
+* ↩️ Add a dedicated backward gesture
 * ✋ Add more gesture commands
-* ⚡ Dynamic speed control
+* ⚡ Implement dynamic speed control
 * 📏 Use hand distance to control speed
 * 🚧 Add ultrasonic obstacle detection
 * 🤖 Add autonomous driving mode
-* 📱 Create a mobile Bluetooth controller
-* 🎨 Build a graphical user interface
-* 📊 Add real-time speed monitoring
+* 🧠 Add custom machine-learning gestures
 * 🎯 Improve gesture stability
-* 🧠 Add machine-learning based custom gestures
 * 🔄 Add gesture calibration
-* 📹 Add project demonstration video
 
 ---
 
 ## 📸 Demo
 
-A demonstration video and project images can be added here.
-<img width="591" height="1280" alt="WhatsApp Image 2026-08-21 at 5 52 31 PM" src="https://github.com/user-attachments/assets/f54803e0-768a-4659-b2d2-89eed509ef72" />
+The following image shows the HandDrive robotic car prototype.
+
+![HandDrive Demo](handdrive-demo.mp4.jpeg)
+
+---
+
 ## 🎥 Project Demo
 
 ### HandDrive in Action
 
-The following video demonstrates real-time hand gesture control of the robotic car using Computer Vision, MediaPipe, Python, and Arduino.
+The following video demonstrates the robotic car being controlled in real time using hand gestures.
 
-[▶️ Watch the HandDrive Demo](./handdrive-demo.mp4)
+[▶️ Watch the HandDrive Demo](handdrive-demo.mp4)
+
