@@ -429,11 +429,11 @@ Possible improvements for future versions:
 
 A demonstration video and project images can be added here.
 <img width="591" height="1280" alt="WhatsApp Image 2026-08-21 at 5 52 31 PM" src="https://github.com/user-attachments/assets/f54803e0-768a-4659-b2d2-89eed509ef72" />
+## 🎥 Project Demo
 
-```text
-## 📸 Demo
+### HandDrive in Action
 
-A demonstration video and project images can be added here.
-```
+The following video demonstrates real-time hand gesture control of the robotic car using Computer Vision, MediaPipe, Python, and Arduino.
 
----
+[▶️ Watch the HandDrive Demo](./handdrive-demo.mp4)
+<img width="591" height="1280" alt="handdrive-demo mp4" src="https://github.com/user-attachments/assets/b3714367-09c9-4806-8186-88071214ec25" />
